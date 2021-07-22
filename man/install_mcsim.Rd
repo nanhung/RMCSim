@@ -10,13 +10,11 @@ install_mcsim(version = "6.2.0")
 \item{version}{a character of version number.}
 }
 \description{
-Download the latest or specific version of \pkg{GNU MCSim} from the official
-website (\url{https://www.gnu.org/software/mcsim/}) and install it to the
-system directory.
+Download and install the portable MCSim into the package folder.
 }
 \details{
-Download and generate the portable MCSim into the package folder (no installation).
-The model generator program 'mod.exe' is used to compile the model code will be generated after the file download.
+The model generator program 'mod.exe' is used to compile the model code
+will be generated after the file download.
 The function can only use for version greater than 5.3.0.
 The Linux user need to make sure the gcc is pre-installed in your system.
 If you use Windows OS, be sure to install Rtools first.

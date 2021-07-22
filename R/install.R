@@ -1,11 +1,9 @@
 #' Download and install \pkg{GNU MCSim}
 #'
-#' Download the latest or specific version of \pkg{GNU MCSim} from the official
-#' website (\url{https://www.gnu.org/software/mcsim/}) and install it to the
-#' system directory.
+#' Download and install the portable MCSim into the package folder.
 #'
-#' Download and generate the portable MCSim into the package folder (no installation).
-#' The model generator program 'mod.exe' is used to compile the model code will be generated after the file download.
+#' The model generator program 'mod.exe' is used to compile the model code
+#' will be generated after the file download.
 #' The function can only use for version greater than 5.3.0.
 #' The Linux user need to make sure the gcc is pre-installed in your system.
 #' If you use Windows OS, be sure to install Rtools first.
@@ -18,54 +16,47 @@
 #'
 #' @param version a character of version number.
 #'
+#' @import withr
+#'
 #' @references \url{https://www.gnu.org/software/mcsim/}
 #'
 #' @export
-install_mcsim <- function(version = "6.2.0"){
+install_mcsim <- function(version = '6.2.0'){
 
   current_wd <- getwd()
-  mcsim_directory <- system.file("mcsim", package = "RMCSim")
-  mcsim_wd <- setwd(mcsim_directory)
+  mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
 
-  files_before <- list.files()
+  if(!dir.exists(mcsim_directory)) dir.create(mcsim_directory)
 
-  message("Start install")
-  version <- version
+  withr::with_dir(mcsim_directory, files_before <- list.files())
   URL <- sprintf('http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz', version)
   tf <- tempfile()
   utils::download.file(URL, tf, mode = "wb")
-  utils::untar(tf)
-
-  files_after <- list.files()
+  withr::with_dir(mcsim_directory, utils::untar(tf))
+  withr::with_dir(mcsim_directory, files_after <- list.files())
 
   file_name <- setdiff(files_after, files_before)
-  if(file_name == "mcsim") file.rename("mcsim", paste0("mcsim-", version))
+  if(file_name == "mcsim")
+    withr::with_dir(mcsim_directory, file.rename("mcsim", paste0("mcsim-", version)))
 
+  mod_directory <- paste0(mcsim_directory, "/mcsim-", version, "/mod")
+  withr::with_dir(mod_directory, generate_config())
+  sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
+  withr::with_dir(sim_directory, generate_config())
 
-  if (Sys.info()[['sysname']] == "Windows") {
-    if(Sys.which("gcc") == ""){ # echo $PATH
-      PATH = "C:\\rtools40\\mingw64\\bin; C:\\rtools40\\usr\\bin"
-      Sys.setenv(PATH = paste(PATH, Sys.getenv("PATH"), sep=";"))
-    } # PATH=$PATH:/c/Rtools/mingw_32/bin; export PATH
-  } # PATH=$PATH:/c/MinGW/msys/1.0/local/bin
+  message("Creating 'mod' file\n")
+  withr::with_dir(mod_directory, system(paste0("gcc -o ./mod.exe *.c")))
+  check_mod <- withr::with_dir(mod_directory, file.exists("mod.exe"))
 
-
-  setwd(paste0(mcsim_directory, "/mcsim-", version, "/mod"))
-  generate_config.h()
-  system(paste0("gcc -o ./mod.exe *.c"))
-  if(file.exists("mod.exe")){
-    cat(paste0("Created model generator program 'mod.exe'\n"))
+  if(check_mod){
+    cat(paste0("Created model generator program\n"))
     message(paste0("The MCSim " , sprintf('%s', version), " is downloaded. The sourced folder is under ", mcsim_directory, "\n"))
   } else
-    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program 'mod.exe'\n"))
+    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program\n"))
 
-  setwd(paste0(mcsim_directory, "/mcsim-", version, "/sim"))
-  generate_config.h()
-  setwd(current_wd)
-  cat("\n")
 }
 
-generate_config.h <- function(){
+generate_config <- function(){
   cat("#define HAVE_DLFCN_H 1 \n",
       "#define HAVE_ERFC 1 \n",
       "#define HAVE_FLOAT_H 1 \n",
