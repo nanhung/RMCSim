@@ -49,6 +49,8 @@ install_mcsim <- function(version = '6.2.0'){
   check_mod <- withr::with_dir(mod_directory, file.exists("mod.exe"))
 
   if(check_mod){
+    withr::with_dir(mod_directory, file.copy("mod.exe", paste0(mcsim_directory, "/mod.exe")))
+    withr::with_dir(mod_directory, file.remove("mod.exe"))
     cat(paste0("Created model generator program\n"))
     message(paste0("The MCSim " , sprintf('%s', version), " is downloaded. The sourced folder is under ", mcsim_directory, "\n"))
   } else
