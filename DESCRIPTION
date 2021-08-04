@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "d99622005@ntu.edu.tw",
            comment = c(ORCID = "0000-0003-0163-2766"))
-Description: Execute 'GNU MCSim' (https://ftp.gnu.org/gnu/mcsim/), 
+Description: Execute 'GNU MCSim' (<https://ftp.gnu.org/gnu/mcsim/>), 
     a simulation and statistical inference tool for algebraic 
     or differential equation systems, throught R interface.
 License: GPL (>= 3)

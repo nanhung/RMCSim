@@ -89,3 +89,19 @@ generate_config <- function(){
       file = "config.h",
       sep = "")
 }
+
+makemcsim <- function(model, deSolve = F, dir = "MCSim"){
+  exe_file <- paste0("mcsim.", model, ".exe")
+
+  if (deSolve == T){
+    system(paste("./MCSim/mod.exe -R ", dir, "/", model, " ", model, ".c", sep = ""))
+    system (paste0("R CMD SHLIB ", model, ".c")) # create *.dll files
+    dyn.load(paste(model, .Platform$dynlib.ext, sep="")) # load *.dll
+    source(paste0(model,"_inits.R"))
+  } else {
+    system(paste("./MCSim/mod.exe ", dir, "/", model, " ", model, ".c", sep = ""))
+    system(paste("gcc -O3 -I.. -I./MCSim/sim -o mcsim.", model, ".exe ", model, ".c ./MCSim/sim/*.c -lm ", sep = ""))
+    invisible(file.remove(paste0(model, ".c")))
+    if(file.exists(exe_file)) message(paste0("* Created executable program '", exe_file, "'."))
+  }
+}
