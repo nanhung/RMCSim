@@ -2,12 +2,27 @@
 % Please edit documentation in R/install.R
 \name{install_mcsim}
 \alias{install_mcsim}
+\alias{find_mcsim}
+\alias{mcsim_version}
+\alias{makemcsim}
 \title{Download and install \pkg{GNU MCSim}}
 \usage{
 install_mcsim(version = "6.2.0")
+
+find_mcsim()
+
+mcsim_version()
+
+makemcsim(model, version = "6.2.0", deSolve = F, dir = ".")
 }
 \arguments{
 \item{version}{a character of version number.}
+
+\item{model}{a string giving the name of the MCSim model file.}
+
+\item{deSolve}{a logical value to compile the MCSim model file to execute with \pkg{deSolve} package.}
+
+\item{dir}{a character to set the directory of the MCSim model file.}
 }
 \description{
 Download and install the portable MCSim into the package folder.
@@ -20,6 +35,15 @@ The Linux user need to make sure the gcc is pre-installed in your system.
 If you use Windows OS, be sure to install Rtools first.
 The Rtools can install through installr::install.rtools()
 }
+\section{Functions}{
+\itemize{
+\item \code{find_mcsim}: Check if MCSim had been installed correctly.
+
+\item \code{mcsim_version}: Check the version of MCSim that is currently installed.
+
+\item \code{makemcsim}: Compile the model file to the executable program.
+}}
+
 \references{
 Bois, F. Y., & Maszle, D. R. (1997).
 MCSim: a Monte Carlo simulation program.

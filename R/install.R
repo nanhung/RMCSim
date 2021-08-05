@@ -15,6 +15,9 @@
 #' \emph{Journal of Statistical Software}, 2(9): 1–60.
 #'
 #' @param version a character of version number.
+#' @param model a string giving the name of the MCSim model file.
+#' @param deSolve a logical value to compile the MCSim model file to execute with \pkg{deSolve} package.
+#' @param dir a character to set the directory of the MCSim model file.
 #'
 #' @import withr
 #'
@@ -59,12 +62,14 @@ install_mcsim <- function(version = '6.2.0'){
 }
 
 #' @export
+#' @describeIn install_mcsim Check if MCSim had been installed correctly.
 find_mcsim = function(){
   mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
   return(file.exists(mod_file))
 }
 
 #' @export
+#' @describeIn install_mcsim Check the version of MCSim that is currently installed.
 mcsim_version = function(){
 
   mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
@@ -118,6 +123,7 @@ generate_config <- function(){
 }
 
 #' @export
+#' @describeIn install_mcsim Compile the model file to the executable program.
 makemcsim <- function(model, version = '6.2.0', deSolve = F, dir = "."){
 
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
