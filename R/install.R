@@ -117,18 +117,26 @@ generate_config <- function(){
       sep = "")
 }
 
-makemcsim <- function(model, deSolve = F, dir = "MCSim"){
+#' @export
+makemcsim <- function(model, version = '6.2.0', deSolve = F, dir = "."){
+
+  mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
+  sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
+  mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
   exe_file <- paste0("mcsim.", model, ".exe")
 
+
+  if(!file.exists(mod_file)) stop("The mod file is not exist.")
+
   if (deSolve == T){
-    system(paste("./MCSim/mod.exe -R ", dir, "/", model, " ", model, ".c", sep = ""))
-    system (paste0("R CMD SHLIB ", model, ".c")) # create *.dll files
-    dyn.load(paste(model, .Platform$dynlib.ext, sep="")) # load *.dll
-    source(paste0(model,"_inits.R"))
+    system(paste0(mod_file, " -R ", dir, "/", model, " ", model, ".c"))
+    system (paste0("R CMD SHLIB ", model, ".c"))
   } else {
-    system(paste("./MCSim/mod.exe ", dir, "/", model, " ", model, ".c", sep = ""))
-    system(paste("gcc -O3 -I.. -I./MCSim/sim -o mcsim.", model, ".exe ", model, ".c ./MCSim/sim/*.c -lm ", sep = ""))
+    system(paste0(mod_file, " ", dir, "/", model, " ", model, ".c"))
+    paste0("gcc -O3 -I.. -I", sim_directory, " -o mcsim.", model, ".exe ", model, ".c ", sim_directory, "/*.c -lm ") |>
+      system()
     invisible(file.remove(paste0(model, ".c")))
     if(file.exists(exe_file)) message(paste0("* Created executable program '", exe_file, "'."))
   }
 }
+
