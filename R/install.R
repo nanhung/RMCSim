@@ -58,6 +58,33 @@ install_mcsim <- function(version = '6.2.0'){
 
 }
 
+#' @export
+find_mcsim = function(){
+  mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
+  return(file.exists(mod_file))
+}
+
+#' @export
+mcsim_version = function(){
+
+  mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
+
+  if(file.exists(mod_file)){
+    command <- paste0(mod_file, " -h")
+    opt <- "mod.mcsim.txt"
+    cat("", file = opt)
+    sink(opt, append=TRUE)
+    print(system(command, intern = TRUE))
+    sink()
+  } else stop("The mod file is not exist.")
+
+  l <- readLines("mod.mcsim.txt")
+  invisible(file.remove("mod.mcsim.txt"))
+  version <- substr(l[4], 12, 16)
+  message("The current GNU MCSim version is ", version)
+
+}
+
 generate_config <- function(){
   cat("#define HAVE_DLFCN_H 1 \n",
       "#define HAVE_ERFC 1 \n",
