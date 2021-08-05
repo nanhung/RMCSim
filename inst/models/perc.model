@@ -80,11 +80,11 @@ Vent_Perf = 1.14;    # ventilation over perfusion ratio
 
 sc_Vmax = .0026;     # scaling coeficient of body weight for Vmax
 
-Km = 1.0;  
+Km = 1.0;
 
 # Scaled parameters
 # -----------------
-# The following parameters are calculated from the above values in the Scale 
+# The following parameters are calculated from the above values in the Scale
 # section before the start of each simulation.
 # They are left uninitialized here.
 
@@ -126,18 +126,18 @@ Initialize {
   # Calculate Flow_alv from total pulmonary flow
   Flow_alv = Flow_pul * 0.7;
 
-  # Calculate total blood flow from the alveolar ventilation rate and 
+  # Calculate total blood flow from the alveolar ventilation rate and
   # the V/P ratio.
   Flow_tot = Flow_alv / Vent_Perf;
 
-  # Calculate actual blood flows from total flow and percent flows 
+  # Calculate actual blood flows from total flow and percent flows
   Flow_fat = Pct_Flow_fat * Flow_tot;
   Flow_liv = Pct_Flow_liv * Flow_tot;
   Flow_pp  = Pct_Flow_pp  * Flow_tot;
   Flow_wp  = Flow_tot - Flow_fat - Flow_liv - Flow_pp;
 
   # Vmax (mass/time) for Michaelis-Menten metabolism is scaled
-  # by multiplication of bdw^0.7 
+  # by multiplication of bdw^0.7
   Vmax = sc_Vmax * exp (0.7 * log (LeanBodyWt));
 
 } # End of model initialization
@@ -167,7 +167,7 @@ Dynamics {
 
   # Arterial blood concentration
   # Convert input given in ppm to mg/l to match other units
-  C_art = (Flow_alv * C_inh / PPM_per_mg_per_l +  dQ_ven) / 
+  C_art = (Flow_alv * C_inh / PPM_per_mg_per_l +  dQ_ven) /
           (Flow_tot + Flow_alv / PC_art);
 
   # Alveolar air concentration
@@ -194,7 +194,7 @@ Dynamics {
 
 
 #---------------------------------------------------------
-# CalcOutputs 
+# CalcOutputs
 # The following outputs are only calculated just before values
 # are saved.  They are not calculated with each integration step.
 #---------------------------------------------------------
@@ -206,201 +206,12 @@ CalcOutputs {
 
   # Fraction of TCE metabolized per day
   Pct_metabolized = (InhMag ?
-                     100 * Q_met / 
+                     100 * Q_met /
                      (1440 * Flow_alv * InhMag * mg_per_l_per_PPM) : 0);
 
   C_exh_ug = C_exh * 1000; # milli to micrograms
 
 } # End of output calculation
 
-
-#-----------------------------------------------------------
-# Jacobian
-# The following computes the Jacobian of the Dynamic ODE
-# system (partial differential of each ODE with respect to
-# each state variable). The syntax is not fully implemented
-# yet and in line code is used. Basically the array rgdJac[]
-# needs to be filled with the derivatives of the above ODE
-# system with respect to the state variable whose number if
-# given by the variable "column". The routine called is
-# CalcJacob (double *pdTime, double rgModelVars[],
-#            long column, double rgdJac[]) and you need to
-# respect the names of its parameters.
-# Note that null elements do not need to be computed. We
-# do it here for completeness and the Jacobian is dense
-# anyway.
-# By the way, using the Jacobian is not much faster than
-# letting Lsodes compute it by numerical differentiation.
-#-----------------------------------------------------------
-
-Jacobian {
-
-  # order of states is {Q_fat, Q_wp, Q_pp, Q_liv, Q_exh, Q_met}
-
-  Inline ( switch (column) { ); # remember: columns numbers start at 1...
-
-  # wrt Q_fat -----------------------------------
-  Inline ( case (1): );
-
-   jac_fat_fat = Flow_fat / (V_fat * PC_fat) * 
-                 (Flow_fat / (Flow_tot + Flow_alv / PC_art) - 1);
-
-   jac_wp_fat  = Flow_wp / (V_fat * PC_fat) * 
-                 (Flow_fat / (Flow_tot + Flow_alv / PC_art));
-
-   jac_pp_fat  = Flow_pp / (V_fat * PC_fat) * 
-                 (Flow_fat / (Flow_tot + Flow_alv / PC_art));
-
-   jac_liv_fat  = Flow_liv / (V_fat * PC_fat) * 
-                 (Flow_fat / (Flow_tot + Flow_alv / PC_art));
-
-   jac_exh_fat  = Flow_alv / (V_fat * PC_fat) *
-                 (Flow_fat / (Flow_tot * PC_art + Flow_alv));
-
-   jac_met_fat  = 0;
-
-   Inline ( rgdJac[0] = jac_fat_fat; );
-   Inline ( rgdJac[1] = jac_wp_fat;  );
-   Inline ( rgdJac[2] = jac_pp_fat;  );
-   Inline ( rgdJac[3] = jac_liv_fat; );
-   Inline ( rgdJac[4] = jac_exh_fat; );
-   Inline ( rgdJac[5] = jac_met_fat; );
-   Inline ( break; );
-
-  # wrt Q_wp -----------------------------------
-  Inline ( case (2): );
-
-   jac_fat_wp  = Flow_fat / (V_wp * PC_wp) * 
-                 (Flow_wp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_wp_wp   = Flow_wp / (V_wp * PC_wp) * 
-                 (Flow_wp  / (Flow_tot + Flow_alv / PC_art) - 1);
-
-   jac_pp_wp   = Flow_pp / (V_wp * PC_wp) * 
-                 (Flow_wp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_liv_wp   = Flow_liv / (V_wp * PC_wp) * 
-                 (Flow_wp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_exh_wp   = Flow_alv / (V_wp * PC_wp) * 
-                 (Flow_wp  / (Flow_tot * PC_art + Flow_alv));
-
-   jac_met_wp   = 0;
-
-   Inline ( rgdJac[0] = jac_fat_wp; );
-   Inline ( rgdJac[1] = jac_wp_wp;  );
-   Inline ( rgdJac[2] = jac_pp_wp;  );
-   Inline ( rgdJac[3] = jac_liv_wp; );
-   Inline ( rgdJac[4] = jac_exh_wp; );
-   Inline ( rgdJac[5] = jac_met_wp; );
-   Inline ( break; );
-
-  # wrt Q_pp -----------------------------------
-  Inline ( case (3): );
-
-   jac_fat_pp  = Flow_fat / (V_pp * PC_pp) * 
-                 (Flow_pp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_wp_pp   = Flow_wp / (V_pp * PC_pp) * 
-                 (Flow_pp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_pp_pp   = Flow_pp / (V_pp * PC_pp) * 
-                 (Flow_pp  / (Flow_tot + Flow_alv / PC_art) - 1);
-
-   jac_liv_pp   = Flow_liv / (V_pp * PC_pp) * 
-                 (Flow_pp  / (Flow_tot + Flow_alv / PC_art));
-
-   jac_exh_pp   = Flow_alv / (V_pp * PC_pp) * 
-                 (Flow_pp  / (Flow_tot * PC_art + Flow_alv));
-
-   jac_met_pp   = 0;
-
-   Inline ( rgdJac[0] = jac_fat_pp; );
-   Inline ( rgdJac[1] = jac_wp_pp;  );
-   Inline ( rgdJac[2] = jac_pp_pp;  );
-   Inline ( rgdJac[3] = jac_liv_pp; );
-   Inline ( rgdJac[4] = jac_exh_pp; );
-   Inline ( rgdJac[5] = jac_met_pp; );
-   Inline ( break; );
-
-  # wrt Q_liv ----------------------------------
-  Inline ( case (4): );
-
-   jac_fat_liv = Flow_fat / (V_liv * PC_liv) * 
-                 (Flow_liv / (Flow_tot + Flow_alv / PC_art));
-
-   jac_wp_liv  = Flow_wp / (V_liv * PC_liv) * 
-                 (Flow_liv / (Flow_tot + Flow_alv / PC_art));
-
-   jac_pp_liv  = Flow_pp / (V_liv * PC_liv) * 
-                 (Flow_liv / (Flow_tot + Flow_alv / PC_art));
-
-   jac_liv_liv  = Flow_liv / (V_liv * PC_liv) * 
-                 (Flow_liv / (Flow_tot + Flow_alv / PC_art) - 1) -
-                 Vmax * Km / ((Km + Q_liv) * (Km + Q_liv));
-
-   jac_exh_liv  = Flow_alv / (V_liv * PC_liv) * 
-                 (Flow_liv / (Flow_tot * PC_art + Flow_alv));
-
-   jac_met_liv  = Vmax * Km / ((Km + Q_liv) * (Km + Q_liv));
-
-   Inline ( rgdJac[0] = jac_fat_liv; );
-   Inline ( rgdJac[1] = jac_wp_liv;  );
-   Inline ( rgdJac[2] = jac_pp_liv;  );
-   Inline ( rgdJac[3] = jac_liv_liv; );
-   Inline ( rgdJac[4] = jac_exh_liv; );
-   Inline ( rgdJac[5] = jac_met_liv; );
-   Inline ( break; );
-
-  # wrt Q_exh ----------------------------------
-  Inline ( case (5): );
-
-   jac_fat_exh = 0;
-
-   jac_wp_exh  = 0;
-
-   jac_pp_exh  = 0;
-
-   jac_liv_exh = 0;
-
-   jac_exh_exh = 0;
-
-   jac_met_exh = 0;
-
-   Inline ( rgdJac[0] = jac_fat_exh; );
-   Inline ( rgdJac[1] = jac_wp_exh;  );
-   Inline ( rgdJac[2] = jac_pp_exh;  );
-   Inline ( rgdJac[3] = jac_liv_exh; );
-   Inline ( rgdJac[4] = jac_exh_exh; );
-   Inline ( rgdJac[5] = jac_met_exh; );
-   Inline ( break; );
-
-  # wrt Q_met ----------------------------------
-  Inline ( case (6): );
-
-   jac_fat_met = 0;
-
-   jac_wp_met  = 0;
-
-   jac_pp_met  = 0;
-
-   jac_liv_met  = 0;
-
-   jac_exh_met  = 0;
-
-   jac_met_met  = 0;
-
-   Inline ( rgdJac[0] = jac_fat_met; );
-   Inline ( rgdJac[1] = jac_wp_met;  );
-   Inline ( rgdJac[2] = jac_pp_met;  );
-   Inline ( rgdJac[3] = jac_liv_met; );
-   Inline ( rgdJac[4] = jac_exh_met; );
-   Inline ( rgdJac[5] = jac_met_met; );
-   Inline ( break; );
-
-
-  Inline ( }  /* end case */);
-
-}
 
 End.
