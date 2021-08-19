@@ -33,6 +33,17 @@ install_mcsim <- function(version = '6.2.0'){
 
   withr::with_dir(mcsim_directory, if(file.exists("mod.exe")) file.remove("mod.exe"))
 
+  mcsim_version <- paste0("mcsim-", version)
+
+  withr::with_dir(mcsim_directory, if(dir.exists(mcsim_version)) mcsim_exists <- TRUE)
+
+  if (mcsim_exists)
+  {
+    if(menu(c("Yes", "No"), title= paste0("\nThe ", mcsim_version, " had already been installed. ", "Do you want to reinstall?")) == 1)
+      withr::with_dir(mcsim_directory, unlink(mcsim_version, recursive = TRUE))
+    else return(invisible())
+  }
+
   withr::with_dir(mcsim_directory, files_before <- list.files())
   URL <- sprintf('http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz', version)
   tf <- tempfile()
@@ -40,6 +51,7 @@ install_mcsim <- function(version = '6.2.0'){
   withr::with_dir(mcsim_directory, utils::untar(tf))
   withr::with_dir(mcsim_directory, files_after <- list.files())
 
+  # For old versions with no version number
   file_name <- setdiff(files_after, files_before)
   if(file_name == "mcsim")
     withr::with_dir(mcsim_directory, file.rename("mcsim", paste0("mcsim-", version)))
