@@ -35,14 +35,15 @@ install_mcsim <- function(version = '6.2.0'){
 
   mcsim_version <- paste0("mcsim-", version)
 
-  withr::with_dir(mcsim_directory, if(dir.exists(mcsim_version)) mcsim_exists <- TRUE)
-
-  if (mcsim_exists)
-  {
-    if(menu(c("Yes", "No"), title= paste0("\nThe ", mcsim_version, " had already been installed. ", "Do you want to reinstall?")) == 1)
-      withr::with_dir(mcsim_directory, unlink(mcsim_version, recursive = TRUE))
-    else return(invisible())
-  }
+  withr::with_dir
+  (mcsim_directory,
+    if(dir.exists(mcsim_version))
+      {
+      if(menu(c("Yes", "No"), title= paste0("\nThe ", mcsim_version, " had already been installed. ", "Do you want to reinstall?")) == 1)
+        withr::with_dir(mcsim_directory, unlink(mcsim_version, recursive = TRUE))
+      else return(invisible())
+      }
+    )
 
   withr::with_dir(mcsim_directory, files_before <- list.files())
   URL <- sprintf('http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz', version)
