@@ -31,6 +31,8 @@ install_mcsim <- function(version = '6.2.0'){
 
   if(!dir.exists(mcsim_directory)) dir.create(mcsim_directory)
 
+  withr::with_dir(mcsim_directory, if(file.exists("mod.exe")) file.remove("mod.exe"))
+
   withr::with_dir(mcsim_directory, files_before <- list.files())
   URL <- sprintf('http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz', version)
   tf <- tempfile()
