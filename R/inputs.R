@@ -10,7 +10,7 @@
 #'
 #' @export
 perc_input <- function(){
-  if (file.exists("perc.lsodes.in")) stop("The 'perc.model' is existed.")
+  if (file.exists("perc.lsodes.in")) stop("The 'perc.lsodes.in' is existed.")
   mpath <- system.file("inputs", "perc.lsodes.in", package="RMCSim")
   file.copy(mpath, getwd())
 }
