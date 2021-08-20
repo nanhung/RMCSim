@@ -141,7 +141,7 @@ generate_config <- function(){
 #' @describeIn install_mcsim Compile the model file to the executable program.
 makemcsim <- function(model, deSolve = F, dir = "."){
 
-  version <- invisible(mcsim_version)
+  version <- invisible(mcsim_version())
 
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
   sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
