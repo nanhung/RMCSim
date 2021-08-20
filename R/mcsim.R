@@ -7,20 +7,20 @@
 #' @param dir a character to set the directory of the MCSim model file.
 #'
 #' @export
-  mcsim <- function(model, input, dir = "."){
+mcsim <- function(model, input, dir = "."){
 
-    MD <- paste0(dir, "/", model)
-    IP <- paste0(dir, "/", input)
+  MD <- paste0(dir, "/", model)
+  IP <- paste0(dir, "/", input)
 
-    if (file.exists(MD) == F) stop("'", model, "' is not exist.")
-    if (file.exists(IP) == F) stop("'", input, "' is not exist.")
+  if (file.exists(MD) == F) stop("'", model, "' is not exist.")
+  if (file.exists(IP) == F) stop("'", input, "' is not exist.")
 
-    exc = paste0("mcsim.", model, ".exe")
-    if (file.exists(exc) == F) {
-      makemcsim(model, dir = dir)
-      if (file.exists(exc) == F) stop("Can not create '", exc, "'.")
-    }
-
-    message(paste0("Execute:", " ./mcsim.", model, ".exe ", dir, "/", input))
-    system(paste0("./mcsim.", model, ".exe ", dir, "/", input))
+  exc = paste0("mcsim.", model, ".exe")
+  if (file.exists(exc) == F) {
+    makemcsim(model, dir = dir)
+    if (file.exists(exc) == F) stop("Can not create '", exc, "'.")
   }
+
+  message(paste0("\nExecute:", " ./mcsim.", model, ".exe ", dir, "/", input))
+  invisible(system(paste0("./mcsim.", model, ".exe ", dir, "/", input)))
+}

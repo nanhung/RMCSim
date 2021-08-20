@@ -10,8 +10,9 @@
 #'
 #' @export
 perc_model <- function(){
+  if (file.exists("perc.model")) stop("The 'perc.model' is existed.")
   mpath <- system.file("models", "perc.model", package="RMCSim")
-  file.copy(mpath, getwd())
+  invisible(file.copy(mpath, getwd()))
 }
 
 

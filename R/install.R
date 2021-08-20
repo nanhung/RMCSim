@@ -69,7 +69,7 @@ install_mcsim <- function(version = '6.2.0'){
   if(check_mod){
     withr::with_dir(mod_directory, file.copy("mod.exe", paste0(mcsim_directory, "/mod.exe")))
     withr::with_dir(mod_directory, file.remove("mod.exe"))
-    cat(paste0("Created model generator program\n"))
+    cat(paste0("Created model generator program\n\n"))
     message(paste0("The MCSim " , sprintf('%s', version), " is downloaded. The sourced folder is under ", mcsim_directory, "\n"))
   } else
     message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program\n"))
@@ -101,7 +101,7 @@ mcsim_version = function(){
   l <- readLines("mod.mcsim.txt")
   invisible(file.remove("mod.mcsim.txt"))
   version <- substr(l[4], 12, 16)
-  message("The current GNU MCSim version is ", version)
+  message("\nThe current GNU MCSim version is ", version)
   return(version)
 }
 
@@ -141,7 +141,7 @@ generate_config <- function(){
 #' @describeIn install_mcsim Compile the model file to the executable program.
 makemcsim <- function(model, deSolve = F, dir = "."){
 
-  version <- invisible(mcsim_version())
+  version <- mcsim_version()
 
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
   sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
