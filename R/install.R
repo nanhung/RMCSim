@@ -102,7 +102,7 @@ mcsim_version = function(){
   invisible(file.remove("mod.mcsim.txt"))
   version <- substr(l[4], 12, 16)
   message("The current GNU MCSim version is ", version)
-
+  return(version)
 }
 
 generate_config <- function(){
@@ -139,7 +139,9 @@ generate_config <- function(){
 
 #' @export
 #' @describeIn install_mcsim Compile the model file to the executable program.
-makemcsim <- function(model, version = '6.2.0', deSolve = F, dir = "."){
+makemcsim <- function(model, deSolve = F, dir = "."){
+
+  version <- invisible(mcsim_version)
 
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
   sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")

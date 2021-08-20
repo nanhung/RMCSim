@@ -13,7 +13,7 @@ find_mcsim()
 
 mcsim_version()
 
-makemcsim(model, version = "6.2.0", deSolve = F, dir = ".")
+makemcsim(model, deSolve = F, dir = ".")
 }
 \arguments{
 \item{version}{a character of version number.}
