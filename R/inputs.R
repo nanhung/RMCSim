@@ -1,6 +1,6 @@
-#' Example Model
+#' Example Input
 #'
-#' The example model: A four-compartment model of Tetrachloroethylene (PERC)
+#' The example input: A four-compartment model of Tetrachloroethylene (PERC)
 #' toxicokinetics. (Bois et al. 1996).
 #'
 #'
@@ -9,9 +9,7 @@
 #' \emph{Archives of toxicology} 70 (1996): 347-355.
 #'
 #' @export
-perc_model <- function(){
-  mpath <- system.file("models", "perc.model", package="RMCSim")
+perc_input <- function(){
+  mpath <- system.file("inputs", "perc.lsodes.in", package="RMCSim")
   file.copy(mpath, getwd())
 }
-
-

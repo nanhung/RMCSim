@@ -20,6 +20,7 @@
 #' @param dir a character to set the directory of the MCSim model file.
 #'
 #' @import withr
+#' @importFrom utils menu
 #'
 #' @references \url{https://www.gnu.org/software/mcsim/}
 #'
