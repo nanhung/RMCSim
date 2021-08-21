@@ -72,7 +72,7 @@ install_mcsim <- function(version = '6.2.0'){
     cat(paste0("Created model generator program\n\n"))
     message(paste0("The MCSim " , sprintf('%s', version), " is downloaded. The sourced folder is under ", mcsim_directory, "\n"))
   } else
-    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program\n"))
+    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program.\n"))
 
 }
 
