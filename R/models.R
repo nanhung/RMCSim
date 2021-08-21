@@ -13,6 +13,7 @@ perc_model <- function(){
   if (file.exists("perc.model")) stop("The 'perc.model' is existed.")
   mpath <- system.file("models", "perc.model", package="RMCSim")
   invisible(file.copy(mpath, getwd()))
+  if(file.exists("perc.model")) message("Created 'perc.model'.")
 }
 
 
