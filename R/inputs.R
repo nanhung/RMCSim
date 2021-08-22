@@ -9,9 +9,22 @@
 #' \emph{Archives of toxicology} 70 (1996): 347-355.
 #'
 #' @export
-perc_input <- function(){
+#' @rdname inputs
+perc_lsodes_input <- function(){
   if (file.exists("perc.lsodes.in")) stop("The 'perc.lsodes.in' is existed.")
   mpath <- system.file("inputs", "perc.lsodes.in", package="RMCSim")
   invisible(file.copy(mpath, getwd()))
   if(file.exists("perc.lsodes.in")) message("Created 'perc.lsodes.in'.")
+}
+
+#' @export
+#' @rdname inputs
+perc_mcmc_input <- function(){
+
+  file_name = "perc.mcmc.in"
+
+  if (file.exists(file_name)) stop("The 'perc.mcmc.in' is existed.")
+  mpath <- system.file("inputs", "perc.lsodes.in", package = "RMCSim")
+  invisible(file.copy(mpath, getwd()))
+  if(file.exists(file_name)) message("Created 'perc.mcmc.in'.")
 }
