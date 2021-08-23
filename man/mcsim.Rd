@@ -4,7 +4,7 @@
 \alias{mcsim}
 \title{Conduct MCSim in simulation}
 \usage{
-mcsim(model, input, dir = ".")
+mcsim(model, input, dir = ".", parallel = F)
 }
 \arguments{
 \item{model}{a string giving the name of the MCSim model file.}
@@ -12,6 +12,8 @@ mcsim(model, input, dir = ".")
 \item{input}{a string giving the name of the MCSim input file.}
 
 \item{dir}{a character to set the directory of the MCSim model file.}
+
+\item{parallel}{a logical value to conduct parallel computing.}
 }
 \description{
 The function needs both MCSim model and input files to conduct the simulation.
