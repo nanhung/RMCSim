@@ -101,7 +101,6 @@ mcsim_version = function(){
   l <- readLines("mod.mcsim.txt")
   invisible(file.remove("mod.mcsim.txt"))
   version <- substr(l[4], 12, 16)
-  message("\nThe current GNU MCSim version is ", version)
   return(version)
 }
 
