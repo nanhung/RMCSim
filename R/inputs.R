@@ -24,7 +24,7 @@ perc_mcmc_input <- function(){
   file_name = "perc.mcmc.in"
 
   if (file.exists(file_name)) stop("The 'perc.mcmc.in' is existed.")
-  mpath <- system.file("inputs", "perc.lsodes.in", package = "RMCSim")
+  mpath <- system.file("inputs", file_name, package = "RMCSim")
   invisible(file.copy(mpath, getwd()))
   if(file.exists(file_name)) message("Created 'perc.mcmc.in'.")
 }
