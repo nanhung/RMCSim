@@ -47,7 +47,7 @@ mcsim <- function(model, input, dir = ".", parallel = F){
       system(paste("./mcsim.", model, ".exe -i 1000 ", mcmc_input, sep = ""))
 
     } else{
-      tmp <- "tmp_mcmc.in.R"
+      tmp <- paste0("tmp_", input)
       writeLines(tx, con=paste0(dir, "/", input))
       writeLines(tx2, con=paste0(dir, "/", tmp))
       system(paste("./mcsim.", model, ".exe ", dir, "/", tmp, sep = ""))
