@@ -52,10 +52,10 @@ install_mcsim <- function(version = '6.2.0'){
   withr::with_dir(mcsim_directory, utils::untar(tf))
   withr::with_dir(mcsim_directory, files_after <- list.files())
 
-  # For old versions with no version number
-  file_name <- setdiff(files_after, files_before)
-  if(file_name == "mcsim")
-    withr::with_dir(mcsim_directory, file.rename("mcsim", paste0("mcsim-", version)))
+  # For old versions with no version number (need to fix)
+  #file_name <- setdiff(files_after, files_before)
+  #if(file_name == "mcsim")
+  #  withr::with_dir(mcsim_directory, file.rename("mcsim", paste0("mcsim-", version)))
 
   mod_directory <- paste0(mcsim_directory, "/mcsim-", version, "/mod")
   withr::with_dir(mod_directory, generate_config())
