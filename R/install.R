@@ -16,7 +16,8 @@
 #'
 #' @param version a character of version number.
 #' @param model a string giving the name of the MCSim model file.
-#' @param deSolve a logical value to compile the MCSim model file to execute with \pkg{deSolve} package.
+#' @param deSolve a logical value to compile the MCSim model file to execute
+#' with \pkg{deSolve} package.
 #' @param dir a character to set the directory of the MCSim model file.
 #'
 #' @import withr
@@ -25,37 +26,42 @@
 #' @references \url{https://www.gnu.org/software/mcsim/}
 #'
 #' @export
-install_mcsim <- function(version = '6.2.0'){
+install_mcsim <- function(version = "6.2.0") {
 
-  current_wd <- getwd()
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
 
-  if(!dir.exists(mcsim_directory)) dir.create(mcsim_directory)
+  if (!dir.exists(mcsim_directory)) dir.create(mcsim_directory)
 
-  withr::with_dir(mcsim_directory, if(file.exists("mod.exe")) file.remove("mod.exe"))
+  withr::with_dir(mcsim_directory,
+                  if (file.exists("mod.exe")) file.remove("mod.exe"))
 
   mcsim_version <- paste0("mcsim-", version)
 
-  withr::with_dir (mcsim_directory,
-    if(dir.exists(mcsim_version))
-      {
-      if(menu(c("Yes", "No"), title= paste0("\nThe ", mcsim_version, " had already been installed. ", "Do you want to reinstall?")) == 1)
-        withr::with_dir(mcsim_directory, unlink(mcsim_version, recursive = TRUE))
+  withr::with_dir(mcsim_directory,
+    if (dir.exists(mcsim_version)) {
+      if (menu(c("Yes", "No"),
+              title = paste0("\nThe ", mcsim_version,
+                             " had already been installed. ",
+                             "Do you want to reinstall?")) == 1)
+        withr::with_dir(mcsim_directory,
+                        unlink(mcsim_version, recursive = TRUE))
       else return(invisible())
       }
     )
 
-  withr::with_dir(mcsim_directory, files_before <- list.files())
-  URL <- sprintf('http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz', version)
+  # withr::with_dir(mcsim_directory, files_before <- list.files())
+  URL <- sprintf("http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz", version)
   tf <- tempfile()
   utils::download.file(URL, tf, mode = "wb")
   withr::with_dir(mcsim_directory, utils::untar(tf))
-  withr::with_dir(mcsim_directory, files_after <- list.files())
+  # withr::with_dir(mcsim_directory, files_after <- list.files())
 
   # For old versions with no version number (need to fix)
-  #file_name <- setdiff(files_after, files_before)
-  #if(file_name == "mcsim")
-  #  withr::with_dir(mcsim_directory, file.rename("mcsim", paste0("mcsim-", version)))
+  # file_name <- setdiff(files_after, files_before)
+  # if(file_name == "mcsim")
+  # withr::with_dir(mcsim_directory,
+  #                 file.rename("mcsim", paste0("mcsim-", version)))
+
 
   mod_directory <- paste0(mcsim_directory, "/mcsim-", version, "/mod")
   withr::with_dir(mod_directory, generate_config())
@@ -66,13 +72,17 @@ install_mcsim <- function(version = '6.2.0'){
   withr::with_dir(mod_directory, system(paste0("gcc -o ./mod.exe *.c")))
   check_mod <- withr::with_dir(mod_directory, file.exists("mod.exe"))
 
-  if(check_mod){
-    withr::with_dir(mod_directory, file.copy("mod.exe", paste0(mcsim_directory, "/mod.exe")))
-    withr::with_dir(mod_directory, file.remove("mod.exe"))
-    cat(paste0("Created model generator program\n\n"))
-    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded. The sourced folder is under ", mcsim_directory, "\n"))
-  } else
-    message(paste0("The MCSim " , sprintf('%s', version), " is downloaded; But have problem to generate model generator program.\n"))
+  if (check_mod) {
+          withr::with_dir(mod_directory,
+                          file.copy("mod.exe",
+                                    paste0(mcsim_directory, "/mod.exe")))
+          withr::with_dir(mod_directory, file.remove("mod.exe"))
+          cat(paste0("Created model generator program\n\n"))
+          message(paste0("The MCSim ", sprintf("%s", version),
+                         " is downloaded. The sourced folder is under ",
+                         mcsim_directory, "\n"))
+  } else message(paste0("The MCSim ", sprintf("%s", version),
+                        " is downloaded; But have problem to generate model generator program.\n"))
 
 }
 
