@@ -2,8 +2,8 @@
 #'
 #' Download and install the portable MCSim into the package folder.
 #'
-#' The model generator program 'mod.exe' is used to compile the model code
-#' will be generated after the file download.
+#' The model generator program 'mod.exe' is used to compile the model code.
+#' It will be generated after the file download.
 #' The function can only use for version greater than 5.3.0.
 #' The Linux user need to make sure the gcc is pre-installed in your system.
 #' If you use Windows OS, be sure to install Rtools first.
@@ -82,28 +82,27 @@ install_mcsim <- function(version = "6.2.0") {
                          " is downloaded. The sourced folder is under ",
                          mcsim_directory, "\n"))
   } else message(paste0("The MCSim ", sprintf("%s", version),
-                        " is downloaded; But have problem to generate model generator program.\n"))
-
+                        " is downloaded; But can't generate model generator program.\n"))
 }
 
 #' @export
 #' @describeIn install_mcsim Check if MCSim had been installed correctly.
-find_mcsim = function(){
+find_mcsim <- function() {
   mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
   return(file.exists(mod_file))
 }
 
 #' @export
 #' @describeIn install_mcsim Check the version of MCSim that is currently installed.
-mcsim_version = function(){
+mcsim_version <- function() {
 
   mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
 
-  if(file.exists(mod_file)){
+  if (file.exists(mod_file)) {
     command <- paste0(mod_file, " -h")
     opt <- "mod.mcsim.txt"
     cat("", file = opt)
-    sink(opt, append=TRUE)
+    sink(opt, append = TRUE)
     print(system(command, intern = TRUE))
     sink()
   } else stop("The mod file is not exist.")
@@ -114,7 +113,7 @@ mcsim_version = function(){
   return(version)
 }
 
-generate_config <- function(){
+generate_config <- function() {
   cat("#define HAVE_DLFCN_H 1 \n",
       "#define HAVE_ERFC 1 \n",
       "#define HAVE_FLOAT_H 1 \n",
@@ -148,7 +147,7 @@ generate_config <- function(){
 
 #' @export
 #' @describeIn install_mcsim Compile the model file to the executable program.
-makemcsim <- function(model, deSolve = F, dir = "."){
+makemcsim <- function(model, deSolve = F, dir = ".") {
 
   version <- mcsim_version()
 
@@ -158,17 +157,18 @@ makemcsim <- function(model, deSolve = F, dir = "."){
   exe_file <- paste0("mcsim.", model, ".exe")
 
 
-  if(!file.exists(mod_file)) stop("The mod file is not exist.")
+  if (!file.exists(mod_file)) stop("The mod file is not exist.")
 
-  if (deSolve == T){
-    system(paste0(mod_file, " -R ", dir, "/", model, " ", model, ".c"))
-    system (paste0("R CMD SHLIB ", model, ".c"))
+  if (deSolve == T) {
+          system(paste0(mod_file, " -R ", dir, "/", model, " ", model, ".c"))
+          system(paste0("R CMD SHLIB ", model, ".c"))
   } else {
-    system(paste0(mod_file, " ", dir, "/", model, " ", model, ".c"))
-    paste0("gcc -O3 -I.. -I", sim_directory, " -o mcsim.", model, ".exe ", model, ".c ", sim_directory, "/*.c -lm ") |>
-      system()
-    invisible(file.remove(paste0(model, ".c")))
-    if(file.exists(exe_file)) message(paste0("* Created executable program '", exe_file, "'."))
+          system(paste0(mod_file, " ", dir, "/", model, " ", model, ".c"))
+          paste0("gcc -O3 -I.. -I", sim_directory, " -o mcsim.",
+                 model, ".exe ", model, ".c ",
+                 sim_directory, "/*.c -lm ") |> system()
+          invisible(file.remove(paste0(model, ".c")))
+          if (file.exists(exe_file))
+                  message(paste0("* Created executable program '", exe_file, "'."))
   }
 }
-
