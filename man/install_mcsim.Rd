@@ -13,14 +13,18 @@ find_mcsim()
 
 mcsim_version()
 
-makemcsim(model, deSolve = F, dir = ".")
+makemcsim(model, mxstep = 500, deSolve = F, dir = ".")
 }
 \arguments{
 \item{version}{a character of version number.}
 
 \item{model}{a string giving the name of the MCSim model file.}
 
-\item{deSolve}{a logical value to compile the MCSim model file to execute with \pkg{deSolve} package.}
+\item{mxstep}{a numeric value to assign the maximum number of
+(internally defined) steps}
+
+\item{deSolve}{a logical value to compile the MCSim model file to execute
+with \pkg{deSolve} package.}
 
 \item{dir}{a character to set the directory of the MCSim model file.}
 }
@@ -28,8 +32,8 @@ makemcsim(model, deSolve = F, dir = ".")
 Download and install the portable MCSim into the package folder.
 }
 \details{
-The model generator program 'mod.exe' is used to compile the model code
-will be generated after the file download.
+The model generator program 'mod.exe' is used to compile the model code.
+It will be generated after the file download.
 The function can only use for version greater than 5.3.0.
 The Linux user need to make sure the gcc is pre-installed in your system.
 If you use Windows OS, be sure to install Rtools first.

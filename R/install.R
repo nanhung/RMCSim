@@ -16,6 +16,8 @@
 #'
 #' @param version a character of version number.
 #' @param model a string giving the name of the MCSim model file.
+#' @param mxstep a numeric value to assign the maximum number of
+#' (internally defined) steps
 #' @param deSolve a logical value to compile the MCSim model file to execute
 #' with \pkg{deSolve} package.
 #' @param dir a character to set the directory of the MCSim model file.
@@ -147,7 +149,7 @@ generate_config <- function() {
 
 #' @export
 #' @describeIn install_mcsim Compile the model file to the executable program.
-makemcsim <- function(model, deSolve = F, dir = ".") {
+makemcsim <- function(model, mxstep = 500, deSolve = F, dir = ".") {
 
   version <- mcsim_version()
 
@@ -156,6 +158,13 @@ makemcsim <- function(model, deSolve = F, dir = ".") {
   mod_file <- paste0(system.file(package = "RMCSim"), "/mcsim/mod.exe")
   exe_file <- paste0("mcsim.", model, ".exe")
 
+  if (mxstep != 500) {
+    file <- paste0(sim_directory, "/lsodes1.c")
+    lsodes1 <- readLines(file)
+    new_mxstp0 <- paste0("mxstp0 = ", mxstep)
+    mxstp0 <- gsub("mxstp0 = 500", new_mxstp0, lsodes1)
+    cat(mxstp0, file = file, sep = "\n")
+  }
 
   if (!file.exists(mod_file)) stop("The mod file is not exist.")
 
@@ -169,6 +178,7 @@ makemcsim <- function(model, deSolve = F, dir = ".") {
                  sim_directory, "/*.c -lm ") |> system()
           invisible(file.remove(paste0(model, ".c")))
           if (file.exists(exe_file))
-                  message(paste0("* Created executable program '", exe_file, "'."))
+                  message(paste0("* Created executable program '",
+                   exe_file, "'."))
   }
 }
