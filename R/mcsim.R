@@ -9,29 +9,29 @@
 #'
 #' @export
 mcsim <- function(model, input, dir = ".", parallel = F){
-  
+
   MD <- paste0(dir, "/", model)
   IP <- paste0(dir, "/", input)
-  
+
   if (file.exists(MD) == F) stop("'", model, "' is not exist.")
   if (file.exists(IP) == F) stop("'", input, "' is not exist.")
-  
+
   exc = paste0("mcsim.", model, ".exe")
   if (file.exists(exc) == F) {
     makemcsim(model, dir = dir)
     if (file.exists(exc) == F) stop("Can not create '", exc, "'.")
   }
-  
+
   tx  <- readLines(paste0(dir, "/", input))
   MCMC_line <- grep("MCMC \\(", x=tx)
   #MonteCarlo_line <- grep("MonteCarlo \\(", x=tx)
   #SetPoints_line <- grep("SetPoints \\(", x=tx)
-  
+
   if (length(MCMC_line) != 0){
     RandomSeed <- sample(1111:9999, 1)
     tx2 <- gsub(pattern = "10101010", replacement = paste(RandomSeed), x = tx)
   }
-  
+
   if (parallel == T){
     i <- RandomSeed
     name <- gsub("\\..*", "", input)
@@ -40,9 +40,9 @@ mcsim <- function(model, input, dir = ".", parallel = F){
     tx3 <- gsub(pattern = "MCMC.default.out", replacement = mcmc_output, x = tx2)
     writeLines(tx3, con = mcmc_input)
     system(paste("./mcsim.", model, ".exe -i 1000 ", mcmc_input, sep = ""))
-    
-    checkfile <- paste0("MCMC.check_", i,".out")
-    
+
+    checkfile <- paste0(name, ".check_", i,".out")
+
     tx4 <- gsub(pattern = ",0,", replacement = ",1,", x = tx3)
     tx5 <- gsub(pattern = paste0("\"", mcmc_output, "\",\"\""),
                 replacement = paste0("\"", checkfile, "\",\"", mcmc_output, "\""),
@@ -51,11 +51,11 @@ mcsim <- function(model, input, dir = ".", parallel = F){
     writeLines(tx5, con=paste0(dir, "/", tmp))
     system(paste("./mcsim.", model, ".exe ", dir, "/", tmp, sep = ""))
     file.remove(paste0(dir, "/", tmp))
-    
+
     if(file.exists(checkfile)){
       message(paste0("* Create '", checkfile, "' from the last iteration."))
-      
-      
+
+
     } else{
       checkfile <- "MCMC.check.out"
       tmp <- paste0("tmp_", input)
@@ -68,11 +68,11 @@ mcsim <- function(model, input, dir = ".", parallel = F){
                   replacement = paste0("\"", checkfile, "\",\"", outfile, "\""),
                   x = tx2)
       writeLines(tx3, con=paste0(dir, "/", tmp))
-      
+
       system(paste("./mcsim.", model, ".exe ", dir, "/", tmp, sep = ""))
       file.remove(paste0(dir, "/", tmp))
     }
-    
+
     if(file.exists(checkfile)){
       message(paste0("* Create '", checkfile, "' from the last iteration."))
     }
@@ -80,5 +80,5 @@ mcsim <- function(model, input, dir = ".", parallel = F){
     message(paste0("\nExecute:", " ./mcsim.", model, ".exe ", dir, "/", input))
     invisible(system(paste0("./mcsim.", model, ".exe ", dir, "/", input)))
   }
-  
+
 }
