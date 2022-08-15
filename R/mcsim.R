@@ -41,7 +41,7 @@ mcsim <- function(model, input, dir = ".", parallel = F){
     writeLines(tx3, con = mcmc_input)
     system(paste("./mcsim.", model, ".exe -i 1000 ", mcmc_input, sep = ""))
 
-    checkfile <- paste0(name, ".check_", i,".out")
+    checkfile <- paste0(name, "_check_", i,".out")
 
     tx4 <- gsub(pattern = ",0,", replacement = ",1,", x = tx3)
     tx5 <- gsub(pattern = paste0("\"", mcmc_output, "\",\"\""),
