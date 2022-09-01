@@ -50,7 +50,7 @@ install_mcsim <- function(version = "6.2.0") {
 
   withr::with_dir(mcsim_directory,
                   if (file.exists("mod.exe")) file.remove("mod.exe"))
-  
+
   # withr::with_dir(mcsim_directory, files_before <- list.files())
   URL <- sprintf("http://ftp.gnu.org/gnu/mcsim/mcsim-%s.tar.gz", version)
   tf <- tempfile()
@@ -149,7 +149,7 @@ generate_config <- function() {
 
 #' @export
 #' @describeIn install_mcsim Compile the model file to the executable program.
-makemcsim <- function(model, mxstep = 500, deSolve = F, dir = ".") {
+makemcsim <- function(model, mxstep = 500, deSolve = F, dir = NULL) {
 
   version <- mcsim_version()
 
