@@ -8,7 +8,6 @@
 #' @param parallel a logical value to conduct parallel computing.
 #'
 #' @export
-<<<<<<< HEAD
 mcsim <- function(model, input, dir = NULL, parallel = F){
 
   MD <- paste0(dir, "/", model)
