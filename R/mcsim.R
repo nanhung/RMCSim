@@ -11,11 +11,6 @@
 <<<<<<< HEAD
 mcsim <- function(model, input, dir = NULL, parallel = F){
 
-=======
-mcsim <- function(model, input, dir = ".", parallel = F){
-  
-  
->>>>>>> 1a561b4a463973b20f2175772db8f595e1523c44
   MD <- paste0(dir, "/", model)
   IP <- paste0(dir, "/", input)
   
