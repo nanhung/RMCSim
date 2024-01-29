@@ -70,7 +70,7 @@ install_mcsim <- function(version = "6.2.0", mxstep=5000) {
   
   sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
   if (mxstep != 500){
-    file <- paste0(sim_directory(), "/lsodes1.c")
+    file <- paste0(sim_directory, "/lsodes1.c")
     lsodes1.c <- readLines(file)
     new.mxstp0 <- paste0("mxstp0 = ", mxstep)
     mxstp0 <- gsub("mxstp0 = 500", new.mxstp0, lsodes1.c)
