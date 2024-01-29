@@ -28,7 +28,7 @@
 #' @references \url{https://www.gnu.org/software/mcsim/}
 #'
 #' @export
-install_mcsim <- function(version = "6.2.0") {
+install_mcsim <- function(version = "6.2.0", mxstep=5000) {
 
   mcsim_directory <- paste0(system.file(package = "RMCSim"), "/mcsim")
 
@@ -67,9 +67,17 @@ install_mcsim <- function(version = "6.2.0") {
 
   mod_directory <- paste0(mcsim_directory, "/mcsim-", version, "/mod")
   withr::with_dir(mod_directory, generate_config())
+  
   sim_directory <- paste0(mcsim_directory, "/mcsim-", version, "/sim")
+  if (mxstep != 500){
+    file <- paste0(sim_directory(), "/lsodes1.c")
+    lsodes1.c <- readLines(file)
+    new.mxstp0 <- paste0("mxstp0 = ", mxstep)
+    mxstp0 <- gsub("mxstp0 = 500", new.mxstp0, lsodes1.c)
+    cat(mxstp0, file=file, sep="\n")
+  }
   withr::with_dir(sim_directory, generate_config())
-
+                  
   message("Creating 'mod' file\n")
   withr::with_dir(mod_directory, system(paste0("gcc -o ./mod.exe *.c")))
   check_mod <- withr::with_dir(mod_directory, file.exists("mod.exe"))
