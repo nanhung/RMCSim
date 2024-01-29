@@ -4,7 +4,7 @@
 \alias{mcsim}
 \title{Conduct MCSim in simulation}
 \usage{
-mcsim(model, input, dir = ".", parallel = F)
+mcsim(model, input, dir = NULL, parallel = F, check = F)
 }
 \arguments{
 \item{model}{a string giving the name of the MCSim model file.}

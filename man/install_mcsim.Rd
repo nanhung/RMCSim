@@ -7,21 +7,21 @@
 \alias{makemcsim}
 \title{Download and install \pkg{GNU MCSim}}
 \usage{
-install_mcsim(version = "6.2.0")
+install_mcsim(version = "6.2.0", mxstep = 5000)
 
 find_mcsim()
 
 mcsim_version()
 
-makemcsim(model, mxstep = 500, deSolve = F, dir = ".")
+makemcsim(model, mxstep = 500, deSolve = F, dir = NULL)
 }
 \arguments{
 \item{version}{a character of version number.}
 
-\item{model}{a string giving the name of the MCSim model file.}
-
 \item{mxstep}{a numeric value to assign the maximum number of
 (internally defined) steps}
+
+\item{model}{a string giving the name of the MCSim model file.}
 
 \item{deSolve}{a logical value to compile the MCSim model file to execute
 with \pkg{deSolve} package.}
@@ -41,13 +41,13 @@ The Rtools can install through installr::install.rtools()
 }
 \section{Functions}{
 \itemize{
-\item \code{find_mcsim}: Check if MCSim had been installed correctly.
+\item \code{find_mcsim()}: Check if MCSim had been installed correctly.
 
-\item \code{mcsim_version}: Check the version of MCSim that is currently installed.
+\item \code{mcsim_version()}: Check the version of MCSim that is currently installed.
 
-\item \code{makemcsim}: Compile the model file to the executable program.
+\item \code{makemcsim()}: Compile the model file to the executable program.
+
 }}
-
 \references{
 Bois, F. Y., & Maszle, D. R. (1997).
 MCSim: a Monte Carlo simulation program.
